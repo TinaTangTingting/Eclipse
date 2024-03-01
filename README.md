@@ -117,4 +117,4 @@ To attack the trained models for inductive (Twitch dataset),
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl 
 ```
-For attacks the --outdir option is used to provide the path to the trained models which is the same as the corresponding path used to run experiment 1. The attack commands save the results in the current directory with "eval_" as a prefix.
+For attacks the --outdir option is used to provide the path to the trained models which is the same as the corresponding path used in training the models. The attack commands save the results in the current directory with "eval_" as a prefix.
