@@ -1,7 +1,7 @@
 # Edge Private Graph Neural Networks with Singular Value Perturbation
 This repository contains code for the PETS 2024 paper "Edge Private Graph Neural Networks with Singular Value Perturbation".
 
-## Dependencies ##
+## Dependencies
 We suggest using Ananconda for managing the environment. The complete list of required software pacakges are in environment.yml file.
 
 To set up conda and create a conda environment based on environment.yml,
@@ -12,8 +12,47 @@ conda env create -n [env_name] --file environment.yml
 ```
 The data for linkteller (Twitch dataset) can be download from the website https://snap.stanford.edu/data/twitch-social-networks.html. Please download the zip file from the website and extract it into the data folder and name the subfolder as linkteller-data. Also, rename the json file inside the DE subfolder as musae_DE_features.json.
 
-## Repository content ##
+## Repository content
 This repository is heavily based on the code from [Kolluri et al. (2022)](https://github.com/aashishkolluri/lpgnet-prototype) and follows the same structure.
+
+### Hardware Requirement
+The codebase has been tested on the following environments.
+
+#### local setup
+
+```
+- CPU: AMD EPYC 7502, 64 cores
+- RAM: 504 GB
+- Disk space: 3.5 T
+- GPU: Nvidia Quadro RTX 5000, 16 GB per GPU
+- GPU memory required: 8 GB
+```
+
+#### VM provided from PETS artifact site
+
+```
+- CPU: Xeon E5-2643, 4 cores
+- RAM: 8GB
+- Disk space: 40 GB
+- GPU: none
+```
+
+### Software Requirement
+
+The complete list of required software packages are in environment.yml file. Below are
+the core libraries used in the codebase.
+
+```
+- Python >= 3.8
+- PyTorch >= 2.0.1
+- PyG >= 2.3.1
+```
+
+---
+
+### Downloading Datasets
+
+---
 
 ### Usage ###
 ```
@@ -73,8 +112,45 @@ Determines how we sample edges for attack.
 `--attack_mode` (Default: efficient)
 Choose baseline for running LPA and efficient for LinkTeller.
 
-### Quick Start: Training and Attacking single models ###
-#### Run training for a single model and dataset with DP ####
+---
+
+### Quick Start: Training and Attacking single models
+
+#### Output directory
+We arrange the output in the following way. During running, all intermediate results will
+be saved in **results/**. Depending on whether the task is model training or attack, 
+results will be saved in **results/train** or **results/attack**.
+
+```
+results/
+|----train/: model checkpoints (.pth) and metrics (e.g., F1 score, .pkl) after training
+|         |
+|         |----experiment1/: results generated after training
+|         |         |
+|         |         |---- model/: model checkpoints (.pth)
+|         |         |
+|         |         |---- *.pkl: metrics (F1 score)
+|         |
+|         |-----todos_experiment1/: all tasks (that specify models, datasets, epsilon, …)
+|                   |
+|                   |----done/: completed training tasks
+|                   |
+|                   |----working/: pending training tasks
+|
+| 
+|----attack/:
+           |
+           |----todos_experiment1/: all tasks (that specify models, datasets, epsilon, …)
+                    |
+                    |----done/: completed attack tasks
+                    |
+                    |----working/: pending attack tasks
+
+```
+
+---
+
+#### Run training for a single model and dataset with DP
 ```
 python main.py --dataset [Dataset] --arch [mmlp|gcn|mlp] --nl [# stack layers for mmlp] --w_dp --eps [Eps] --svd --rank 20 --sample_seed [Seed] --hidden_size [HID_s] --num_hidden [HID_n] train --lr [Lr] --dropout [Dropout]
 ```
