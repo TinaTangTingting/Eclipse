@@ -30,15 +30,15 @@ The codebase has been tested on the following environments.
 
 #### VM provided from PETS artifact site
 
-This environment was only tested on Cora, Citeseer, Chameleon dataset 
-due to resource constraints.
-
 ```
 - CPU: Xeon E5-2643, 4 cores
 - RAM: 8GB
 - Disk space: 40 GB
 - GPU: none
 ```
+
+Note: this setup was only tested on Cora, Citeseer, Chameleon dataset 
+due to resource constraints in the provided VMs.
 
 ### Software Requirement
 
