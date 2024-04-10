@@ -44,7 +44,7 @@ the core libraries used in the codebase.
 
 ```
 - Python >= 3.8
-- PyTorch >= 2.0.1
+- PyTorch >= 2.0
 - PyG >= 2.3.1
 ```
 
