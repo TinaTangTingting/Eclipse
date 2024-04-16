@@ -11,8 +11,17 @@ bash Anaconda3-2021.11-Linux-x86_64.sh
 conda env create -n [env_name] --file environment.yml
 ```
 
+Some key dependency are listed below:
+
+```
+- Python >= 3.8
+- PyTorch >= 2.0
+- PyG >= 2.3.1
+```
+
+---
+
 ## Repository content
-This repository is heavily based on the code from [Kolluri et al. (2022)](https://github.com/aashishkolluri/lpgnet-prototype) and follows the same structure. All python scripts are included in src/ directory.
 
 ### Hardware Requirement
 The codebase has been tested on the following environments.
@@ -39,28 +48,8 @@ The codebase has been tested on the following environments.
 Note: this setup was only tested on Cora, Citeseer, Chameleon dataset 
 due to resource constraints in the provided VMs.
 
-In general, the code can be executed on CPU or GPU. The CPU memory should be larger than 8GB to avoid Out-of-Memory error when executing on Pubmed and facebook page dataset. For all other datasets, 8GB CPU memory is sufficient. The GPUs can be rented through GPU cloud service providers, such as AWS, Lambda Labs, vast.ai, etc. The GPU memory should also be at least 8GB.
+In general, the code can be executed on CPU or GPU. The CPU memory should be larger than 8GB to avoid Out-of-Memory error when executing on Pubmed and facebook page dataset. For all other datasets, 8GB CPU memory is sufficient. 
 
-### Software Requirement
-
-The complete list of required software packages are in environment.yml file. Below are
-the core libraries used in the codebase.
-
-```
-- Python >= 3.8
-- PyTorch >= 2.0
-- PyG >= 2.3.1
-```
-
----
-
-### Downloading Datasets
-
-The data for linkteller (Twitch dataset) can be download and prepared using
-
-```
-bash get_twitch.sh
-```
 ---
 
 ### Estimated Time and Storage Consumption
@@ -69,8 +58,8 @@ Depending on the dataset size, the evalutation for one specific choice of (datas
 ---
 
 ### Usage ###
-```
-usage: main.py [-h]
+```bash
+usage: python main.py [-h]
                --arch {mlp,mmlp,gcn}
                [--dataset {cora,citeseer,pubmed,facebook_page,twitch/ES,flickr,bipartite,chameleon}]
                [--test_dataset {twitch/RU,twitch/DE,twitch/FR,twitch/ENGB,twitch/PTBR}]
@@ -80,6 +69,7 @@ usage: main.py [-h]
                [--w_dp]
                [--eps EPS]
                [--outdir OUTDIR]
+               [--todos_dir TODODIR]
                [--num_seeds NUM_SEEDS] 
                [--sample_seed SAMPLE_SEED]
                [--svd]
@@ -116,6 +106,9 @@ Number of hidden layers
 
 `--outdir` (Default: ../results)
 Directory to save the models and results
+
+`--todos_dir` (Default: ../results/)
+Directory to save the todo tasks for all experiments
 
 `--test_dataset` (Default: None)
 Test on this dataset, used for Twitch
@@ -167,11 +160,14 @@ results/
 ```
 python main.py --dataset [Dataset] --arch [mmlp|gcn|mlp] --nl [# stack layers for mmlp] --w_dp --eps [Eps] --svd --rank 20 --sample_seed [Seed] --hidden_size [HID_s] --num_hidden [HID_n] train --lr [Lr] --dropout [Dropout]
 ```
+
 - Here is an example to train GCN with Eclipse of rank 20
 ```
 python main.py --dataset cora --arch gcn --w_dp --eps 4.0 --svd --rank 20 --sample_seed 42 --hidden_size 256 --num_hidden 2 train --lr 0.01 --dropout 0.2
 ```
-You can also run for multiple seeds using the --num_seeds option. The results are stored in the folder defined in globals.py or the directory specified using the --outdir option. The trained models are stored in the args.outdir/models directory.
+You can also run for multiple seeds using the `--num_seeds` option. The results are stored in the folder defined in globals.py or the directory specified using the `--outdir` option. 
+The trained models are stored in the `outdir/models` directory.
+
 ### Run the attacks on a single trained model
 To run attack on a trained model, we need all the options used for training that model and a few options in addition such as the attack_mode and sample_type (samples for evaluation).
 ```
@@ -188,131 +184,151 @@ The attack results are stored in the directory with name eval_[dataset] which is
 The procedure to reproduce the results follows the steps described in [Kolluri et al. (2022)](https://github.com/aashishkolluri/lpgnet-prototype). We show the commands to include Eclipse in the script.
 
 ### Training Models
----
-#### Hyperparameter Search ####
-To search for the best hyperparameters for transductive datasets,
-```
-python run_exp.py --num_seeds 5 --command train --outdir ../data-hyperparams --hyperparameters --todos_dir [todos]
-```
-To search for the best hyperparameters for inductive dataset (Twitch dataset),
-```
-python run_exp.py --num_seeds 5 --num_epochs 200 --command train --outdir ../data-hyperparams-inductive --hyperparameters --todos_dir [todos] --inductive
-```
-To parse the best configuration for (dataset, architecture)
-```
-python run_exp.py --parse_config_dir [data-hyperparameters-dir]
-```
-This creates a file `best_config.pkl` in the local directory which contains the best hyperparameters.
 
-You can also skip the above search by directly using the `best_config.pkl` file provided in the artifact.
+#### Training Procedure
 
-#### Generating to-do tasks for training ####
-Before training for transductive starts, generate the complete set of to-do tasks,
+The training consists of three steps as follows:
+
+- **Step 1**: Generate to-do tasks for training
+- **Step 2**: Train the models
+- **Step 3**: Parse training results
+
+Commands for each step are listed as follows:
+
+#### Step 1: Generate to-do tasks for training
+
+- For transductive datasets (e.g., Cora)
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
 ```
-Before training for inductive starts, generate the complete set of to-do tasks,
+- For inductive datasets (e.g., Twitch)
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --inductive --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
 ```
-#### Training the models ####
-To train on the best hyperparameters for transductive, 
+#### Step 2: Training the models
+
+- For transductive datasets (e.g., Cora)
+
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl
 ```
-To train on the best hyperparameters for inductive (Twitch dataset), 
+
+- For inductive datasets (e.g., Twitch)
+
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --inductive --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl
 ```
-You can change the rank to keep after Singular Value Decomposition by setting a different value for `--rank`. We used rank of 20 to produce the results in the paper.
 
-The [results-dir] and [todos] can be any directory paths where you want to save the results and cache the todo/finished tasks respectively.
-
-#### Parse training results ####
+#### Step 3: Parse training results
 To parse results to get utility scores, provide path to the results directory used during the training.
 
-For transductive,
+- For transductive datasets
 ```
 python parser_ash.py --results_dir [results-dir]
 ```
-For inductive,
+- For inductive datasets
 ```
 python parser_ash_ind_utility.py --results_dir [results-dir]
 ```
-The parsed results will be output in the results folder.
+The parsed results will be output in the `results` folder.
 
 The expected result is stored in the `expected_results` folder.
 
-The training experiment for transductive in our paper runs for 5 datasets(Cora, Citeseer, Pubmed, Facebook page, Chameleon) x 5 random seeds x 4 model architectures(GCN,MLP,LPGNet,Eclipse) x 20 epsilon values ([0.1,0.2,...,0.9], [0,1,2,...,10]) = 1525 tasks (MLP only uses one epsilon value since no adjacency matrix is involved in MLP training). These task runs in approximately 128 hours on one machine and consumes 8GB on disk. You can run the command simultaneously in different terminals to expediate the execution of the job.
+**Note**: The training experiment for transductive in our paper runs for *5 datasets*(Cora, Citeseer, Pubmed, Facebook page, Chameleon),
+*5 random seeds*, *4 model architectures*(GCN,MLP,LPGNet,Eclipse) and *20 epsilon values* ([0.1,0.2,...,0.9], [0,1,2,...,10]).
+In total, there are *1525 tasks* (MLP only uses one epsilon value since no adjacency matrix is involved in MLP training). 
+The estimated running time for running all these experiments is around *128 hours on VMs provided by PETS*. 
+You can run the command simultaneously in different terminals to expediate the execution of the job.
 
-#### Quick Verification
-To quickly verify that the training experiment can be executed correctly, we provide run_exp_demo.py to run the training experiment on Cora dataset and 3 epsilon values([0,1,10]) only. 
+#### Quick Verification on the Cora Dataset
+To quickly verify that the training experiment can be executed correctly, we also provide `run_exp_demo.py` to run the training experiment on Cora dataset and 3 epsilon values([0,1,10]) only. 
 
-First, generate to-do tasks for this quick experiment
 ```
+- generate to-do tasks
 python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
-```
-Then, run the tasks 
-```
+
+- run the tasks
 python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl
 ```
-There will be 10 to-do tasks generated in the run_exp_demo.py experiment, but the actual run will be 50 tasks, since each task will be executed for 5 times with 5 different random seeds. These tasks are expected to run in about 250 minutes (~4.2 hours) on one machine. After parsing the results following the instruction above, the results should be similar to the results provided in expected_results/result_cora.csv (lines corresponding to epsilon values 0, 1 and 10). 
+**Note**: There will be 10 to-do tasks generated in the run_exp_demo.py experiment, with each one consisting of 5 random seeds. 
+The estimated running time is 4 hours on one VM provided by PETS. 
+After parsing the results following the instruction above, 
+the results should be similar to the results provided in `expected_results/result_cora.csv` (lines corresponding to epsilon values 0, 1 and 10). 
 
-We reported the mean values in the results for plotting the figures in our paper, and the models and column names correspond as follows:
+**Note**: We reported the mean values in the results for plotting the figures in our paper, and the models and column names correspond as follows.
+Since MLP training does not involve adjacency matrix, and the epsilon values are applied to add DP noise to adjacency matrix only,
+our code automatically assigns value of -1 to MLP experiments with non-zero epsilon values.
 ```
 gcn_mean -> GCN
 gcn_rank20_mean -> Eclipse
 mlp_mean -> MLP
 mmlp_nl2_mean -> LPGNet
 ```
-Note that since MLP training does not involve adjacency matrix, and the epsilon values are applied to add DP noise to adjacency matrix only, our code automatically assigns value of -1 to MLP experiments with non-zero epsilon values.
 
-### Attacking the Trained Models
 ---
 
-Note: DO NOT delete the results-dir obtained during training the models, as the trained model information is saved in results-dir and is needed for loading the model and running the attack on the trained models.
-#### Generating to-do tasks for attack ####
-Before attacks for transductive start, generate the complete set of to-do tasks,
+### Attacking the Trained Models
+
+**Note**: DO NOT delete the `results-dir` obtained during training the models, as the trained model information is saved 
+in `results-dir` and is needed for loading the model and running the attack on the trained models.
+
+#### Attacking Procedure
+
+- **Step 1**: Generate to-do tasks
+- **Step 2**: Attack the models
+- **Step 3**: Parse attacking results
+
+
+#### Step 1: Generating to-do tasks for attack
+
+- For transductive datasets
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
 ```
-Before attacks for inductive start, generate the complete set of to-do tasks,
+
+- For inductive datasets
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
 ```
-#### Attack the trained models ####
-To attack the trained models for transductive, 
+#### Step 2: Attack the trained models
+
+- For transductive datasets
+
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl 
 ```
-To attack the trained models for inductive (Twitch dataset), 
+
+- For inductive datasets
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl 
 ```
-For attacks the --outdir option is used to provide the path to the trained models which is the same as the corresponding path used in training the models. The attack commands save the results in the current directory with "eval_" as a prefix.
 
-#### Parse attack results ####
-To parse results to get attack AUC (Area Under Curve) scores, provide the path to the directory with saved models ( "eval_" as prefix in src/ directory). Note that this script is used for both transductive and inductive.
+**Note**: The attack commands save the results in the current directory with "eval_" as a prefix.
+
+#### Step 3: Parse attack results
+To parse results to get attack AUC (Area Under Curve) scores, provide the path to the directory with saved models ( "eval_" as prefix in `./src` directory).
+
+- For both transductive and inductive datasets
+
 ```
 python parser_ash_trans_attack.py --results_dir [results-dir]
 ```
-The parsed results will be output in the results folder.
+**Note**: The parsed results will be output in the `results-dir` folder. The expected result is stored in the `expected_results` folder.
 
-The expected result is stored in the expected_results folder.
+#### Quick Verification on the Cora Dataset
 
-Similar runtime (1525 tasks, ~128 hours on one machine) is expected for the attack experiment in our paper.
+Using the trained models from the quick verification experiment above, we can quickly verify if the attack experiments can be executed correctly on Cora dataset and 3 epsilon values.
 
-#### Quick Verification
-Using the trained models from the quick verification experiment above, we can quicky verify if the attack experiement can be executed correctly on Cora dataset and 3 epsilon values.
-
-First, generate to-do tasks for attacking the models
 ```
+- generate to-do tasks
 python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
-```
-Then, attack the trained models
-```
+
+- attack the trained model
 python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl 
 ```
-There are 10 attack tasks generated in the run_exp_demo.py experiment, but the actual run will be 100 tasks, because each task will be executed for 5 times with 5 different random seeds, and each random seed will run for 1 LPA attack and 1 Linkteller attack. These tasks are expected to run in about 500 minutes (~8.4 hours) on one machine. After parsing the results following the instruction above, the results should be similar to the results provided in expected_results/result_attack_cora_baseline_balanced.csv (lines corresponding to epsilon values 0, 1 and 10) for LPA attack, and expected_results/result_attack_cora_efficient_balanced.csv (lines corresponding to epsilon values 0, 1 and 10) for Linkteller attack.
-
-Note that for MLP model with non-zero epsilon values, -1 will be automatically assigned.
+**Note**: There are 10 attack tasks generated in the run_exp_demo.py experiment, with each task consisting of 2 attack methods (LPA and LINKTELLER) and 5 random seeds.
+The estimated running time is ~8 hours on the VM provided by PETS. 
+After parsing the results following the instruction above, the results should be similar to the results provided in 
+`expected_results/result_attack_cora_baseline_balanced.csv` (lines corresponding to epsilon values 0, 1 and 10) for the LPA attack, 
+and `expected_results/result_attack_cora_efficient_balanced.csv` (lines corresponding to epsilon values 0, 1 and 10) for the LINKTELLER attack.
+For MLP model with non-zero epsilon values, -1 will be automatically assigned.
