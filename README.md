@@ -200,7 +200,7 @@ Commands for each step are listed as follows:
 - For transductive datasets (e.g., Cora)
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
-```
+```  
 - For inductive datasets (e.g., Twitch)
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --inductive --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
@@ -245,11 +245,13 @@ To quickly verify that the training experiment can be executed correctly, we als
 
 ```
 - generate to-do tasks
-python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
+python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir ../results --todos_dir ../todos_train --best_config_file best_config.pkl --only_create_todos
 
 - run the tasks
-python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl
+python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir ../results --todos_dir ../todos_train --best_config_file best_config.pkl
 ```
+**Note**: In the above commands, --outdir can be any other directories specified by [results-dir], `../results` is just an example for illustration purpose. Similarly, --todos_dir can be any other directories specified by [todos], `../todos_train` is an example for illustration purpose.
+
 **Note**: There will be 10 to-do tasks generated in the run_exp_demo.py experiment, with each one consisting of 5 random seeds. 
 The estimated running time is 4 hours on one VM provided by PETS. 
 After parsing the results following the instruction above, 
@@ -321,11 +323,13 @@ Using the trained models from the quick verification experiment above, we can qu
 
 ```
 - generate to-do tasks
-python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
+python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir ../results --todos_dir ../todos_attack --best_config_file best_config.pkl --only_create_todos
 
 - attack the trained model
-python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl 
+python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir ../results --todos_dir ../todos_attack --best_config_file best_config.pkl 
 ```
+**Note**: In the above commands, --outdir should be the same as the [results-dir] used during training the model. Here, `../results` was used in training the model above, so we continue using it in attack steps. However, --todos_dir should be different from the [todos] used during training the model. `todos_train` was used in training the model above, so we use a different directory `../todos_attack` to store the to-do tasks for attacking the models.
+
 **Note**: There are 10 attack tasks generated in the run_exp_demo.py experiment, with each task consisting of 2 attack methods (LPA and LINKTELLER) and 5 random seeds.
 The estimated running time is ~8 hours on the VM provided by PETS. 
 After parsing the results following the instruction above, the results should be similar to the results provided in 
