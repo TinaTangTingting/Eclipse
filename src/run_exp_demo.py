@@ -148,11 +148,14 @@ def create_todos(datasets, eps_list, architecture_names, configs, TODOS_DIR):
             if not os.path.exists(os.path.join(TODOS_DIR, todo)):
                 f = open(os.path.join(TODOS_DIR, todo), "w")
                 f.close()
-    try:
-        os.mkdir(TODOS_DIR)
-    except Exception:
-        print("Cannot create {}".format(TODOS_DIR))
-        pass
+        print("{} created successfully.".format(TODOS_DIR))
+    else:
+        print("{} already exists. You should delete it if you want to create new todos.".format(TODOS_DIR))
+    # try:
+    #     os.mkdir(TODOS_DIR)
+    # except Exception:
+    #     print("Cannot create {}".format(TODOS_DIR))
+    #     pass
 
 
 def create_best_todos(datasets, eps_list, architecture_names, best_configs, TODOS_DIR):
@@ -216,11 +219,14 @@ def create_best_todos(datasets, eps_list, architecture_names, best_configs, TODO
             if not os.path.exists(os.path.join(TODOS_DIR, todo)):
                 f = open(os.path.join(TODOS_DIR, todo), "w")
                 f.close()
-    try:
-        os.mkdir(TODOS_DIR)
-    except Exception:
-        print("Cannot create {}".format(TODOS_DIR))
-        pass
+        print("{} created successfully.".format(TODOS_DIR))
+    else:
+        print("{} already exists. You should delete it if you want to create new todos.".format(TODOS_DIR))
+    # try:
+    #     os.mkdir(TODOS_DIR)
+    # except Exception:
+    #     print("Cannot create {}".format(TODOS_DIR))
+    #     pass
 
 
 def attack_for_config(

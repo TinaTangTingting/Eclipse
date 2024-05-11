@@ -12,7 +12,7 @@ def getF1Scores(tobj):
     return mean, std
 
 
-def write_to_csv(results, datasets, att_types, sample_types, epss, archs):
+def write_to_csv(results, datasets, att_types, sample_types, epss, archs,results_dir):
     import csv
 
     archs = list(archs)
@@ -33,7 +33,8 @@ def write_to_csv(results, datasets, att_types, sample_types, epss, archs):
             for sample_type in sample_types:
                 # t = f"result_attack_{dataset}_{att_type}_{sample_type}_nfeat.csv" #for node feature attack
                 t = f"result_attack_{dataset}_{att_type}_{sample_type}.csv"
-                fname = os.path.join(MyGlobals.RESULTDIR, t)
+                # fname = os.path.join(MyGlobals.RESULTDIR, t)
+                fname = os.path.join(results_dir, t)
                 print(f"Writing to {fname}")
                 with open(fname, "w") as f:
                     csv_writer = csv.writer(f, delimiter=",")
@@ -125,4 +126,4 @@ if __name__ == "__main__":
                         round(np.mean(a), 4),
                         round(np.std(a), 4),
                     )
-    write_to_csv(results, datasets, att_types, sample_types, epss, archs)
+    write_to_csv(results, datasets, att_types, sample_types, epss, archs,args.results_dir)

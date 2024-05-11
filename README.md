@@ -200,10 +200,16 @@ Commands for each step are listed as follows:
 - For transductive datasets (e.g., Cora)
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --command train --outdir ../results --todos_dir ../todos_train --best_config_file best_config.pkl --only_create_todos
 ```  
 - For inductive datasets (e.g., Twitch)
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --inductive --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --inductive --datasets TwitchES --outdir ../results_ind --todos_dir ../todos_train_ind --best_config_file best_config.pkl --only_create_todos
 ```
 #### Step 2: Training the models
 
@@ -211,12 +217,18 @@ python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --in
 
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command train --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --command train --outdir ../results --todos_dir ../todos_train --best_config_file best_config.pkl
 ```
 
 - For inductive datasets (e.g., Twitch)
 
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --inductive --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command train --inductive --datasets TwitchES --outdir ../results_ind --todos_dir ../todos_train_ind --best_config_file best_config.pkl
 ```
 
 #### Step 3: Parse training results
@@ -225,12 +237,18 @@ To parse results to get utility scores, provide path to the results directory us
 - For transductive datasets
 ```
 python parser_ash.py --results_dir [results-dir]
+
+# Example command
+python parser_ash.py --results_dir ../results
 ```
 - For inductive datasets
 ```
 python parser_ash_ind_utility.py --results_dir [results-dir]
+
+# Example command
+python parser_ash_ind_utility.py --results_dir ../results_ind
 ```
-The parsed results will be output in the `results` folder.
+The parsed results will be output in the `[results-dir]` folder.
 
 The expected result is stored in the `expected_results` folder.
 
@@ -245,12 +263,12 @@ To quickly verify that the training experiment can be executed correctly, we als
 
 ```
 - generate to-do tasks
-python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir ../results --todos_dir ../todos_train --best_config_file best_config.pkl --only_create_todos
+python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir ../results_cora --todos_dir ../todos_train_cora --best_config_file best_config.pkl --only_create_todos
 
 - run the tasks
-python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir ../results --todos_dir ../todos_train --best_config_file best_config.pkl
+python run_exp_demo.py --rank 20  --num_seeds 5 --command train --outdir ../results_cora --todos_dir ../todos_train_cora --best_config_file best_config.pkl
 ```
-**Note**: In the above commands, --outdir can be any other directories specified by [results-dir], `../results` is just an example for illustration purpose. Similarly, --todos_dir can be any other directories specified by [todos], `../todos_train` is an example for illustration purpose.
+**Note**: In the above commands, --outdir can be any other directories specified by [results-dir], `../results_cora` is just an example for illustration purpose. Similarly, --todos_dir can be any other directories specified by [todos], `../todos_train_cora` is an example for illustration purpose.
 
 **Note**: There will be 10 to-do tasks generated in the run_exp_demo.py experiment, with each one consisting of 5 random seeds. 
 The estimated running time is 4 hours on one VM provided by PETS. 
@@ -286,11 +304,17 @@ in `results-dir` and is needed for loading the model and running the attack on t
 - For transductive datasets
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --command attack --outdir ../results --todos_dir ../todos_attack --best_config_file best_config.pkl --only_create_todos
 ```
 
 - For inductive datasets
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl --only_create_todos
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --datasets TwitchES --outdir ../results_ind --todos_dir ../todos_attack_ind --best_config_file best_config.pkl --only_create_todos
 ```
 #### Step 2: Attack the trained models
 
@@ -298,11 +322,17 @@ python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --d
 
 ```
 python run_exp.py --rank 20  --num_seeds 5 --command attack --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl 
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --command attack --outdir ../results --todos_dir ../todos_attack --best_config_file best_config.pkl
 ```
 
 - For inductive datasets
 ```
 python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --datasets TwitchES --outdir [results-dir] --todos_dir [todos] --best_config_file best_config.pkl 
+
+# Example command
+python run_exp.py --rank 20  --num_seeds 5 --num_epochs 200 --command attack --datasets TwitchES --outdir ../results_ind --todos_dir ../todos_attack_ind --best_config_file best_config.pkl
 ```
 
 **Note**: The attack commands save the results in the current directory with "eval_" as a prefix.
@@ -314,8 +344,11 @@ To parse results to get attack AUC (Area Under Curve) scores, provide the path t
 
 ```
 python parser_ash_trans_attack.py --results_dir [results-dir]
+
+# Example command for parsing attack results for Cora dataset
+python parser_ash_trans_attack.py --results_dir ./eval_cora
 ```
-**Note**: The parsed results will be output in the `results-dir` folder. The expected result is stored in the `expected_results` folder.
+**Note**: The parsed results will be output in the `results-dir` folder (That is, `./src/eval_[dataset_name]/` folder). The expected result is stored in the `expected_results` folder.
 
 #### Quick Verification on the Cora Dataset
 
@@ -323,10 +356,10 @@ Using the trained models from the quick verification experiment above, we can qu
 
 ```
 - generate to-do tasks
-python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir ../results --todos_dir ../todos_attack --best_config_file best_config.pkl --only_create_todos
+python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir ../results_cora --todos_dir ../todos_attack_cora --best_config_file best_config.pkl --only_create_todos
 
 - attack the trained model
-python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir ../results --todos_dir ../todos_attack --best_config_file best_config.pkl 
+python run_exp_demo.py --rank 20  --num_seeds 5 --command attack --outdir ../results_cora --todos_dir ../todos_attack_cora --best_config_file best_config.pkl 
 ```
 **Note**: In the above commands, --outdir should be the same as the [results-dir] used during training the model. Here, `../results` was used in training the model above, so we continue using it in attack steps. However, --todos_dir should be different from the [todos] used during training the model. `todos_train` was used in training the model above, so we use a different directory `../todos_attack` to store the to-do tasks for attacking the models.
 
@@ -336,3 +369,13 @@ After parsing the results following the instruction above, the results should be
 `expected_results/result_attack_cora_baseline_balanced.csv` (lines corresponding to epsilon values 0, 1 and 10) for the LPA attack, 
 and `expected_results/result_attack_cora_efficient_balanced.csv` (lines corresponding to epsilon values 0, 1 and 10) for the LINKTELLER attack.
 For MLP model with non-zero epsilon values, -1 will be automatically assigned.
+
+### Script for Quick Verification on the Cora Dataset
+We have also provided a script `run_exp_demo.sh` which include all the commands for running the training and attack experiments on Cora dataset and 3 epsilon values([0,1,10]) only. Make sure the mode of the script is changed to executable before running the script. The parsed training result will be in `results_cora` folder, and the parsed attack result will be in `/src/eval_cora/` folder. 
+```
+# Change script mode to executable
+chmod 777 run_exp_demo.sh
+
+# Run the script
+./run_exp_demo.sh
+```
