@@ -622,11 +622,11 @@ def run_all_commands(device, args):
         
             # Transductive setting datasets
             datasets = [
-                # utils.Dataset.Chameleon, 
+                utils.Dataset.Chameleon, 
                 utils.Dataset.Cora,      
-                # utils.Dataset.CiteSeer,
-                # utils.Dataset.PubMed,
-                # utils.Dataset.facebook_page,
+                utils.Dataset.CiteSeer,
+                utils.Dataset.PubMed,
+                utils.Dataset.facebook_page,
             ]
         else:
             if args.attack_bd:  # attack number breakdown experiments
@@ -729,6 +729,7 @@ def run():
         default=None,
         help="Specific datasets separated by comma",
     )
+    # parser.add_argument("--all_eps",action="store_true", default=False)
 
     args = parser.parse_args()
 

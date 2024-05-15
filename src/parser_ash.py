@@ -11,7 +11,7 @@ def getF1Scores(tobj):
     return mean, std
 
 
-def write_to_csv(results, datasets, epss, archs):
+def write_to_csv(results, datasets, epss, archs,results_dir):
     import csv
 
     archs = list(archs)
@@ -27,7 +27,8 @@ def write_to_csv(results, datasets, epss, archs):
 
     for dataset in datasets:
         t = "result" + dataset + ".csv"
-        fname = os.path.join(MyGlobals.RESULTDIR, t)
+        # fname = os.path.join(MyGlobals.RESULTDIR, t)
+        fname = os.path.join(results_dir, t)
         with open(fname, "w") as f:
             csv_writer = csv.writer(f, delimiter=",")
             csv_writer.writerow(column_names)
@@ -90,4 +91,4 @@ if __name__ == "__main__":
             )[0][1]
         mean, std = getF1Scores(tobj)
         results[dataset][eps][arch] = (round(mean, 4), round(std, 4))
-        write_to_csv(results, datasets, epss, archs)
+        write_to_csv(results, datasets, epss, archs,args.results_dir)
