@@ -370,12 +370,34 @@ After parsing the results following the instruction above, the results should be
 and `expected_results/result_attack_cora_efficient_balanced.csv` (lines corresponding to epsilon values 0, 1 and 10) for the LINKTELLER attack.
 For MLP model with non-zero epsilon values, -1 will be automatically assigned.
 
-### Script for Quick Verification on the Cora Dataset
-We have also provided a script `run_exp_demo.sh` which include all the commands for running the training and attack experiments on Cora dataset and 3 epsilon values([0,1,10]) only. Make sure the mode of the script is changed to executable before running the script. The parsed training result will be in `results_cora` folder, and the parsed attack result will be in `/src/eval_cora/` folder. 
+### Script for Quick Verification
+We have also provided a script `run_exp_demo.sh` which include all the commands for running the training and attack experiments on specified dataset(s) and 3 epsilon values([0,1,10]) only. Make sure the mode of the script is changed to executable before running the script. The parsed training result will be in `results` folder, and the parsed attack result will be in `/src/eval_[dataset]/` folder (e.g. Cora dataset will have the parsed atttack result in `/src/eval_cora/`, CiteSeer dataset will have the parsed attack result in `/src/eval_citeseer`). 
 ```
 # Change script mode to executable
 chmod 777 run_exp_demo.sh
 
-# Run the script
-./run_exp_demo.sh
+# Run the script with Cora dataset
+./run_exp_demo.sh Cora
+
+# Run the script with CiteSeer dataset
+./run_exp_demo.sh CiteSeer
+
+# Run the script with Cora and CiteSeer datasets, dataset names separated by comma and NO space between the names
+./run_exp_demo.sh Cora,CiteSeer
+```
+**Note**: When running the script with multiple datasets, dataset names should be separated by comma. There should be NO space following the comma.
+
+**Note**: The dataset names are case-sensitive and should strictly follow the dataset names listed below.
+```
+Cora
+CiteSeer
+PubMed
+facebook_page
+Chameleon
+TwitchES
+TwitchRU
+TwitchDE
+TwitchFR
+TwitchENGB
+TwitchPTBR
 ```
