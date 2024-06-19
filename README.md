@@ -48,7 +48,7 @@ The codebase has been tested on the following environments.
 Note: this setup was only tested on Cora, Citeseer, Chameleon dataset 
 due to resource constraints in the provided VMs.
 
-In general, the code can be executed on CPU or GPU. The CPU memory should be larger than 8GB to avoid Out-of-Memory error when executing on Pubmed and facebook page dataset. For all other datasets, 8GB CPU memory is sufficient. 
+In general, the code can be executed on CPU or GPU. The CPU memory should be at least 32GB to avoid Out-of-Memory error when executing on Pubmed and facebook page dataset. For all other datasets, 8GB CPU memory is sufficient. 
 
 ---
 
@@ -371,21 +371,27 @@ and `expected_results/result_attack_cora_efficient_balanced.csv` (lines correspo
 For MLP model with non-zero epsilon values, -1 will be automatically assigned.
 
 ### Script for Quick Verification
-We have also provided a script `run_exp_demo.sh` which include all the commands for running the training and attack experiments on specified dataset(s) and 3 epsilon values([0,1,10]) only. Make sure the mode of the script is changed to executable before running the script. The parsed training result will be in `results` folder, and the parsed attack result will be in `/src/eval_[dataset]/` folder (e.g. Cora dataset will have the parsed atttack result in `/src/eval_cora/`, CiteSeer dataset will have the parsed attack result in `/src/eval_citeseer`). 
+We have also provided two scripts, `run_exp_demo.sh` and `run_exp_demo_ind.sh` which include all the commands for running the training and attack experiments on specified dataset(s) and 3 epsilon values([0,1,10]) only. Make sure the mode of the scripts are changed to executable before running the scripts. The parsed training result will be in `results` folder, and the parsed attack result will be in `/src/eval_[dataset]/` folder (e.g. Cora dataset will have the parsed atttack result in `/src/eval_cora/`, CiteSeer dataset will have the parsed attack result in `/src/eval_citeseer`). 
 ```
 # Change script mode to executable
 chmod 777 run_exp_demo.sh
+chmod 777 run_exp_demo_ind.sh
 
-# Run the script with Cora dataset
+# Run the script for transductive setting with Cora dataset
 ./run_exp_demo.sh Cora
 
-# Run the script with CiteSeer dataset
+# Run the script for transductive setting with CiteSeer dataset
 ./run_exp_demo.sh CiteSeer
 
-# Run the script with Cora and CiteSeer datasets, dataset names separated by comma and NO space between the names
+# Run the script for transductive setting with Cora and CiteSeer datasets, dataset names separated by comma and NO space between the names
 ./run_exp_demo.sh Cora,CiteSeer
+
+# Run the script for inductive setting with Twitch datasets
+./run_exp_demo_ind.sh TwitchES
 ```
 **Note**: When running the script with multiple datasets, dataset names should be separated by comma. There should be NO space following the comma.
+
+**Note**: One should run Twitch datasets using `run_exp_demo_ind.sh`. The transductive datasets, namely Cora, CiteSeer, Pubmed, Chameleon and facebook_page, should be run using `run_exp_demo.sh`.
 
 **Note**: The dataset names are case-sensitive and should strictly follow the dataset names listed below.
 ```
@@ -395,9 +401,4 @@ PubMed
 facebook_page
 Chameleon
 TwitchES
-TwitchRU
-TwitchDE
-TwitchFR
-TwitchENGB
-TwitchPTBR
 ```

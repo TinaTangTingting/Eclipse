@@ -478,11 +478,11 @@ class LoadData:
             s = np.load(os.path.join(svd_dir, 's.npy'))
             Vh = np.load(os.path.join(svd_dir, 'Vh.npy'))
             
-        if dataset == "twitch/RU":
-            with open('svd_twitchRU.csv', 'w', encoding='UTF8', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(s.T) 
-            exit()
+        # if dataset == "twitch/RU":
+        #     with open('svd_twitchRU.csv', 'w', encoding='UTF8', newline='') as file:
+        #         writer = csv.writer(file)
+        #         writer.writerow(s.T) 
+        #     exit()
                 
         arr = u[:,:rank] @ np.diag(s[:rank]) @ Vh[:rank,:]
 
